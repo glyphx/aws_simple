@@ -10,7 +10,7 @@ terraform {
     organization = "glyph"
 
     workspaces {
-      name = "Example-Workspace"
+      name = "ansible-testing"
     }
   }
 }
@@ -25,7 +25,7 @@ variable "awsprops" {
     itype        = "t2.micro"
     publicip     = true
     keyname      = "ansible-testing"
-    secgroupname = "IAC-Sec-Group"
+    secgroupname = "sec-group-ansible-testing"
   }
 }
 
@@ -33,7 +33,7 @@ provider "aws" {
   region = lookup(var.awsprops, "region")
 }
 
-resource "aws_security_group" "sg-ansible-testing" {
+resource "aws_security_group" "sec-group-ansible-testing" {
   name        = lookup(var.awsprops, "secgroupname")
   description = lookup(var.awsprops, "secgroupname")
   vpc_id      = lookup(var.awsprops, "vpc")
@@ -61,7 +61,7 @@ resource "aws_instance" "ansible-testing" {
   key_name                    = lookup(var.awsprops, "keyname")
 
   vpc_security_group_ids = [
-    aws_security_group.sg-ansible-testing.id
+    aws_security_group.sec-group-ansible-testing.id
   ]
   root_block_device {
     delete_on_termination = true
@@ -77,7 +77,7 @@ resource "aws_instance" "ansible-testing" {
   }
 
 
-  depends_on = [aws_security_group.sg-ansible-testing]
+  depends_on = [aws_security_group.sec-group-ansible-testing]
 }
 
 output "ec2instance" {
